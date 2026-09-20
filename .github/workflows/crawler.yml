@@ -198,13 +198,28 @@ jobs:
       - name: Prepare Cloudflare Pages assets
         if: success() && steps.cf_check.outputs.enabled == 'true'
         run: |
-          if [ ! -f index.html ]; then
-            echo "❌ 未找到 index.html，请确认爬虫已生成网页报告"
-            exit 1
+          # if [ ! -f index.html ]; then
+          #   echo "❌ 未找到 index.html，请确认爬虫已生成网页报告"
+          #   exit 1
+          # fi
+          # rm -rf cloudflare_dist
+          # mkdir -p cloudflare_dist
+          # cp index.html cloudflare_dist/index.html
+          # 查找当前目录下所有 .html 文件，按修改时间排序，取最新的一个
+          latest_html=$(ls -t *.html 2>/dev/null | head -n1)
+          
+          if [ -z "$latest_html" ]; then
+              echo "❌ 未找到任何 .html 文件，请确认爬虫已生成网页报告"
+              exit 1
           fi
+          
           rm -rf cloudflare_dist
           mkdir -p cloudflare_dist
-          cp index.html cloudflare_dist/index.html
+          
+          # 将最新的html复制并重命名为 index.html
+          cp "$latest_html" cloudflare_dist/index.html
+          echo "✅ 已将最新生成文件: $latest_html → cloudflare_dist/index.html"
+
 
       - name: Deploy to Cloudflare Pages
         if: success() && steps.cf_check.outputs.enabled == 'true'
