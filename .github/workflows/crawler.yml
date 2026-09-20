@@ -217,6 +217,7 @@ jobs:
           mkdir -p cloudflare_dist
           
           # 将最新的html复制并重命名为 index.html
+          cp "$latest_html" cloudflare_dist/"$latest_html"
           cp "$latest_html" cloudflare_dist/index.html
           echo "✅ 已将最新生成文件: $latest_html → cloudflare_dist/index.html"
 
